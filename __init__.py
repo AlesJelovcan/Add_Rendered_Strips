@@ -147,7 +147,11 @@ class RenderSelectedStripsOperator(bpy.types.Operator):
                 src_ext = ".mp4"
 
                 # Set the path to the blend file
-                rendered_dir = blend_path = bpy.utils.user_resource("DATAFILES") + "/Rendered_Strips_" + str(date.today()) #bpy.data.filepath
+                blend_path = bpy.data.filepath
+                if blend_path:
+                    rendered_dir = bpy.path.abspath(os.path.dirname(blend_path)) + "/strips"
+                else:
+                    rendered_dir = bpy.path.abspath(os.path.expanduser("~")) + "/strips"
 
                 # Set the render settings for rendering animation with FFmpeg and MP4 with sound
                 bpy.context.scene.render.image_settings.file_format = "FFMPEG"
@@ -195,6 +199,7 @@ class RenderSelectedStripsOperator(bpy.types.Operator):
                         bpy.ops.sequencer.movie_strip_add(
                             channel=insert_channel,
                             filepath=output_path,
+                            sound=False,
                             frame_start=int(strip.frame_final_start),
                             overlap=0,
                         )
